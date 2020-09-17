@@ -4,7 +4,7 @@ import os
 import TextTweet
 
 # APIの秘密鍵
-CK,CS,AT,ATS=os.environ["CK"], os.environ["CS"], os.environ["AT"], os.environ["AS"]
+CK,CS,AT,AS=os.environ["CK"], os.environ["CS"], os.environ["AT"], os.environ["AS"]
 
 twische = BlockingScheduler()
 
