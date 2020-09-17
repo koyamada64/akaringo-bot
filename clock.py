@@ -9,7 +9,7 @@ CK,CS,AT,ATS=os.environ["CK"], os.environ["CS"], os.environ["AT"], os.environ["A
 twische = BlockingScheduler()
 
 # 30分に一度ツイート
-@twische.scheduled_job('interval',minutes=1)
+@twische.scheduled_job('interval',minutes=15)
 def timed_job():
     TextTweet.puttweet(CK,CS,AT,AS)
 
