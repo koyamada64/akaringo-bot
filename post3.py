@@ -1,5 +1,11 @@
 ﻿# -*- coding: utf-8 -*-
+import os
 import tweepy
+
+CK=os.getenv("CK")
+CS=os.getenv("CS")
+AT=os.getenv("AT")
+AS=os.getenv("AS")
 
 # Twitterオブジェクトの生成
 auth = tweepy.OAuthHandler(CK, CS)
