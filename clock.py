@@ -3,6 +3,8 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 import os
 import TextTweet
 from PrepareChain import PrepareChain
+import DataPrep
+import GetTweet
 
 # APIの秘密鍵
 CK,CS,AT,AS=os.environ["CK"], os.environ["CS"], os.environ["AT"], os.environ["AS"]
@@ -12,6 +14,8 @@ twische = BlockingScheduler()
 # 30分に一度ツイート
 @twische.scheduled_job('interval',minutes=30)
 def timed_job():
+    DataPrep.DataPrep("data_orig.txt", "data.txt")
+    GetTweet.gettweet(CK,CS,AT,AS)
     f = open("data.txt",encoding="utf-8")
     text = f.read()
     f.close()
