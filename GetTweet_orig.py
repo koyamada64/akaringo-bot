@@ -17,25 +17,22 @@ def gettweet(CK,CS,AT,AS):
 
     for result in results:
 
-        text=result.text
         #リンクの削除
-        text=re.sub(r"https?://[\w/:%#\$&\?\(\)~\.=\+\-…_]+", "" ,text)
+        result.text=re.sub(r"https?://[\w/:%#\$&\?\(\)~\.=\+\-…_]+", "" ,result.text)
 
-        #RT:の削除
-        text=re.sub(r"RT", "" ,text)
-        text=re.sub(r":", "" ,text)
-        
         #ライパIDの除外
-        text=re.sub(r"[0-9]{7}", "",text)
+        result.text=re.sub(r"[0-9]{7}", "", result.text)
 
         #@ツイートの削除(昔仲良くしていたけど今ブロ解された…みたいな人に行くと地獄なので)
-        text=re.sub("@[\w]+","",text)
+        result.text=re.sub("@[\w]+","",result.text)
 
         #「#peing」「#質問箱」を消す
-        text=re.sub("#peing","",text)
-        text=re.sub("#質問箱","",text)
+        result.text=re.sub("#peing","",result.text)
+        result.text=re.sub("#質問箱","",result.text)
 
         #data.txtに追加で書き込み
-        f.write(text+"\n")
+        f.write(result.text+"\n")
 
+    #RT:の削除
+    result.text=re.sub(r"RT : ", "" ,result.text)
     f.close()

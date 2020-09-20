@@ -1,5 +1,6 @@
 ﻿# -*- coding: utf-8 -*-
 import tweepy
+import re
 import os.path
 import sqlite3
 import random
@@ -7,7 +8,7 @@ from PrepareChain import PrepareChain
 
 class Gentext(object):
     # 短い文を作りたいのでn=1とする
-    def __init__(self, n=4):
+    def __init__(self, n=3):
         self.n = n
 
     def generate(self):
@@ -27,6 +28,8 @@ class Gentext(object):
 
         # dbを閉じる
         conn.close()
+
+        generated_text=re.sub(r"#", " #" ,generated_text)
 
         return generated_text
 
