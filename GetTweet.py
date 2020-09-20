@@ -11,7 +11,7 @@ def gettweet(CK,CS,AT,AS):
     api = tweepy.API(auth)
 
     # 自分のTLの最新ツイートを取得
-    results=api.home_timeline(count=5,include_rts=False)
+    results=api.home_timeline(count=7,include_rts=False,exclude_replies=True)
 
     f = open(r"data.txt",mode="a",encoding="utf-8")
 
@@ -19,6 +19,9 @@ def gettweet(CK,CS,AT,AS):
 
         #リンクの削除
         result.text=re.sub(r"https?://[\w/:%#\$&\?\(\)~\.=\+\-…_]+", "" ,result.text)
+
+        #ライパIDの除外
+        result.text=re.sub(r'[0-9]{7}', "", result.text)
 
         #@ツイートの削除(昔仲良くしていたけど今ブロ解された…みたいな人に行くと地獄なので)
         result.text=re.sub("@[\w]+","",result.text)

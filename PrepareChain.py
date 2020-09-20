@@ -5,8 +5,11 @@ import MeCab
 import sqlite3
 from collections import defaultdict
 
-
 class PrepareChain(object):
+    """
+    チェーンを作成してdbに保存するクラス
+    """
+
     BEGIN = u"__BEGIN_SENTENCE__"
     END = u"__END_SENTENCE__"
 
@@ -14,46 +17,59 @@ class PrepareChain(object):
     DB_SCHEMA_PATH = "schema.sql"
 
     def __init__(self, text):
+        """
+        初期化メソッド
+        """
         self.text=text
 
-        # 蠖｢諷狗ｴ�隗｣譫千畑繧ｿ繧ｬ繝ｼ
+        # 形態素解析用タガー
         self.tagger = MeCab.Tagger('-Ochasen')
 
     def make_triplet_freqs(self):
-        # 髟ｷ縺�譁�遶�繧偵そ繝ｳ繝�繝ｳ繧ｹ豈弱↓蛻�蜑ｲ
+        """
+        形態素解析から3つ組の出現回数まで
+        """
+
+        # 長い文章をセンテンス毎に分割
         sentences = self._divide(self.text)
 
-        # 3縺､邨�縺ｮ蜃ｺ迴ｾ蝗樊焚
+        # 3つ組の出現回数
         triplet_freqs = defaultdict(int)
 
-        # 繧ｻ繝ｳ繝�繝ｳ繧ｹ豈弱↓3縺､邨�縺ｫ縺吶ｋ
+        # センテンス毎に3つ組にする
         for sentence in sentences:
-            # 蠖｢諷狗ｴ�隗｣譫�
+            # 形態素解析
             morphemes = self._morphological_analysis(sentence)
-            # 3縺､邨�繧偵▽縺上ｋ
+            # 3つ組をつくる
             triplets = self._make_triplet(morphemes)
-            # 蜃ｺ迴ｾ蝗樊焚繧貞刈邂�
+            # 出現回数を加算
             for (triplet, n) in triplets.items():
                 triplet_freqs[triplet] += n
 
         return triplet_freqs
 
     def _divide(self, text):
-        # 謾ｹ陦梧枚蟄嶺ｻ･螟悶�ｮ蛻�蜑ｲ譁�蟄暦ｼ域ｭ｣隕剰｡ｨ迴ｾ陦ｨ險假ｼ�
+        """
+        「。」や改行などで区切られた長い文章を一文ずつに分ける
+        """
+        # 改行文字以外の分割文字（正規表現表記）
         delimiter = u"。|\?|\!|？|！|．|\."
 
-        # 蜈ｨ縺ｦ縺ｮ蛻�蜑ｲ譁�蟄励ｒ謾ｹ陦梧枚蟄励↓鄂ｮ謠幢ｼ�split縺励◆縺ｨ縺阪↓縲後ゅ阪↑縺ｩ縺ｮ諠�蝣ｱ繧堤┌縺上＆縺ｪ縺�縺溘ａ�ｼ�
+        # 全ての分割文字を改行文字に置換（splitしたときに「。」などの情報を無くさないため）
         text = re.sub(r"({})".format(delimiter), r"\1\n", text)
 
-        # 謾ｹ陦梧枚蟄励〒蛻�蜑ｲ
+        # 改行文字で分割
         sentences = text.splitlines()
 
-        # 蜑榊ｾ後�ｮ遨ｺ逋ｽ譁�蟄励ｒ蜑企勁
+        # 前後の空白文字を削除
         sentences = [sentence.strip() for sentence in sentences]
 
         return sentences
 
     def _morphological_analysis(self, sentence):
+        """
+        一文を形態素解析する
+        """
         morphemes = []
         node = self.tagger.parseToNode(sentence)
         while node:
@@ -64,52 +80,62 @@ class PrepareChain(object):
         return morphemes
 
     def _make_triplet(self, morphemes):
-        # 3縺､邨�繧偵▽縺上ｌ縺ｪ縺�蝣ｴ蜷医�ｯ邨ゅ∴繧�
+        """
+        形態素解析で分割された配列を、形態素毎に3つ組にしてその出現回数を数える
+        """
+        # 3つ組をつくれない場合は終える
         if len(morphemes) < 3:
             return {}
 
-        # 蜃ｺ迴ｾ蝗樊焚縺ｮ霎樊嶌
+        # 出現回数の辞書
         triplet_freqs = defaultdict(int)
 
-        # 郢ｰ繧願ｿ斐＠
+        # 繰り返し
         for i in range(len(morphemes) - 2):
             triplet = tuple(morphemes[i:i + 3])
             triplet_freqs[triplet] += 1
 
-        # begin繧定ｿｽ蜉�
+        # beginを追加
         triplet = (PrepareChain.BEGIN, morphemes[0], morphemes[1])
         triplet_freqs[triplet] = 1
 
-        # end繧定ｿｽ蜉�
+        # endを追加
         triplet = (morphemes[-2], morphemes[-1], PrepareChain.END)
         triplet_freqs[triplet] = 1
 
         return triplet_freqs
 
     def save(self, triplet_freqs, init=False):
-        # DB繧ｪ繝ｼ繝励Φ
+        """
+        3つ組毎に出現回数をDBに保存
+        """
+
+        # DBオープン
         con = sqlite3.connect(PrepareChain.DB_PATH)
 
-        # 蛻晄悄蛹悶°繧牙ｧ九ａ繧句�ｴ蜷�
+        # 初期化から始める場合
         if init:
-            # DB縺ｮ蛻晄悄蛹�
+            # DBの初期化
             with open(PrepareChain.DB_SCHEMA_PATH, "r") as f:
                 schema = f.read()
                 con.executescript(schema)
 
-            # 繝�繝ｼ繧ｿ謨ｴ蠖｢
+            # データ整形
             datas = [(triplet[0], triplet[1], triplet[2], freq)
                      for (triplet, freq) in triplet_freqs.items()]
 
-            # 繝�繝ｼ繧ｿ謖ｿ蜈･
+            # データ挿入
             p_statement = u"insert into chain_freqs (prefix1, prefix2, suffix, freq) values (?, ?, ?, ?)"
             con.executemany(p_statement, datas)
 
-        # 繧ｳ繝溘ャ繝医＠縺ｦ繧ｯ繝ｭ繝ｼ繧ｺ
+        # コミットしてクローズ
         con.commit()
         con.close()
 
     def show(self, triplet_freqs):
+        """
+        3つ組毎の出現回数を出力する
+        """
         for triplet in triplet_freqs:
             print("|".join(triplet), "\t", triplet_freqs[triplet])
 
