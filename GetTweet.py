@@ -13,7 +13,8 @@ def gettweet(CK,CS,AT,AS):
     f = open(r"data.txt",mode="a",encoding="utf-8")
 
     # 自分のTLの最新ツイートを取得
-    results=api.home_timeline(count=7,exclude_replies=True)
+    # results=api.home_timeline(count=8,exclude_replies=True)
+    results=api.home_timeline(count=8,exclude_replies=True)
 
     for result in results:
 
@@ -24,7 +25,7 @@ def gettweet(CK,CS,AT,AS):
         #RT:の削除
         text=re.sub(r"RT", "" ,text)
         text=re.sub(r":", "" ,text)
-        
+
         #ライパIDの除外
         text=re.sub(r"[0-9]{7}", "",text)
 
