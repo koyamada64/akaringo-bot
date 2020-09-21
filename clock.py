@@ -12,7 +12,7 @@ CK,CS,AT,AS=os.environ["CK"], os.environ["CS"], os.environ["AT"], os.environ["AS
 twische = BlockingScheduler()
 
 # 30分に一度ツイート
-@twische.scheduled_job('interval',minutes=30)
+@twische.scheduled_job('interval',minutes=20)
 def timed_job():
     DataPrep.DataPrep("data_orig.txt", "data.txt")
     GetTweet.gettweet(CK,CS,AT,AS)

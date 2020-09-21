@@ -2,7 +2,7 @@ import random
 import linecache
 
 def random_lines(filename):
-    idxs = random.sample(range(66), 4)
+    idxs = random.sample(range(66), 6)
     return [linecache.getline(filename, i) for i in idxs]
 
 def DataPrep(file1,file2):

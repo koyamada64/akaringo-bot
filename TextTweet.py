@@ -8,7 +8,7 @@ from PrepareChain import PrepareChain
 
 class Gentext(object):
     # 短い文を作りたいのでn=1とする
-    def __init__(self, n=3):
+    def __init__(self, n=4):
         self.n = n
 
     def generate(self):
