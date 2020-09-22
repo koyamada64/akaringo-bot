@@ -7,6 +7,7 @@ import DataPrep
 import GetTweet
 
 # APIの秘密鍵
+
 CK,CS,AT,AS=os.environ["CK"], os.environ["CS"], os.environ["AT"], os.environ["AS"]
 
 twische = BlockingScheduler()
