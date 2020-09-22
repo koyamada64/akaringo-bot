@@ -32,9 +32,11 @@ def gettweet(CK,CS,AT,AS):
         #@ツイートの削除(昔仲良くしていたけど今ブロ解された…みたいな人に行くと地獄なので)
         text=re.sub("@[\w]+","",text)
 
-        #「#peing」「#質問箱」を消す
+        #「#peing」「#質問箱」「#マシュマロを投げ合おう」「#shindanmaker」を消す
         text=re.sub("#peing","",text)
         text=re.sub("#質問箱","",text)
+        text=re.sub("#マシュマロを投げ合おう","",text)
+        text=re.sub("#shindanmaker","",text)
 
         #data.txtに追加で書き込み
         f.write(text+"\n")

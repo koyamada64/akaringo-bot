@@ -8,8 +8,9 @@ from PrepareChain import PrepareChain
 
 class Gentext(object):
     # 短い文を作りたいのでn=1とする
-    def __init__(self, n=4):
-        self.n = n
+    def __init__(self):
+        self.n = 2
+        #self.n = random.randrange(1,5)
 
     def generate(self):
         generated_text = u""
