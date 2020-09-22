@@ -14,7 +14,7 @@ def gettweet(CK,CS,AT,AS):
 
     # 自分のTLの最新ツイートを取得
     # results=api.home_timeline(count=8,exclude_replies=True)
-    results=api.home_timeline(count=8)
+    results=api.home_timeline(count=200)
 
     for result in results:
 
