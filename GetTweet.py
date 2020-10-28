@@ -13,7 +13,6 @@ def gettweet(CK,CS,AT,AS):
     f = open(r"data.txt",mode="a",encoding="utf-8")
 
     # 自分のTLの最新ツイートを取得
-    # results=api.home_timeline(count=8,exclude_replies=True)
     results=api.home_timeline(count=200)
 
     for result in results:
@@ -26,10 +25,10 @@ def gettweet(CK,CS,AT,AS):
         text=re.sub(r"RT", "" ,text)
         text=re.sub(r":", "" ,text)
 
-        #ライパIDの除外
+        #ライパIDの削除
         text=re.sub(r"[0-9]{7}", "",text)
 
-        #@ツイートの削除(昔仲良くしていたけど今ブロ解された…みたいな人に行くと地獄なので)
+        #@ツイートの削除
         text=re.sub("@[\w]+","",text)
 
         #「#peing」「#質問箱」「#マシュマロを投げ合おう」「#shindanmaker」を消す
@@ -37,6 +36,13 @@ def gettweet(CK,CS,AT,AS):
         text=re.sub("#質問箱","",text)
         text=re.sub("#マシュマロを投げ合おう","",text)
         text=re.sub("#shindanmaker","",text)
+
+        #NGワードの置換
+        text=re.sub("児童ポルノ","山形りんご",text)
+        text=re.sub("児ポ","山形りんご",text)
+        text=re.sub("爆破","山形りんご",text)
+        text=re.sub("死","[ﾋﾟｰ]",text)
+        text=re.sub("殺","[ﾋﾟｰ]",text)
 
         #data.txtに追加で書き込み
         f.write(text+"\n")

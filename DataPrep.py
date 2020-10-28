@@ -2,6 +2,7 @@ import random
 import linecache
 
 def random_lines(filename):
+    #rangeの中の数字はセリフデータの行数です。適宜変更してください。
     idxs = random.sample(range(500), 200)
     return [linecache.getline(filename, i) for i in idxs]
 
